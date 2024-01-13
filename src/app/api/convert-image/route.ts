@@ -33,10 +33,7 @@ export const POST = async (req: Request) => {
     const convertOriginalWebp = () => {
       return new Promise((resolve, reject) => {
         sharp(imageBuffer)
-          .toFormat('webp', {
-            quality: 80,
-            lossless: false,
-          })
+          .webp({ lossless: false, quality: 80 })
           .toBuffer()
           .then((result) => {
             resolve(result);
@@ -51,18 +48,13 @@ export const POST = async (req: Request) => {
 
     const originalWebp = originalResult as Buffer;
 
-    // Resize and convert to WebP
     const convertResizedWebp = () => {
       return new Promise((resolve, reject) => {
         sharp(imageBuffer)
           .resize({
             width: Number(width),
-            withoutEnlargement: true,
           })
-          .toFormat('webp', {
-            quality: 80,
-            lossless: false,
-          })
+          .webp({ lossless: false, quality: 100 })
           .toBuffer()
           .then((result) => {
             resolve(result);
