@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 import Replicate from 'replicate';
 import axios from 'axios';
-import { headers } from 'next/headers';
 
 export const runtime = 'nodejs';
 
