@@ -7,7 +7,7 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_KEY,
 });
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   const formData = await req.formData();
   const file = formData.get('image');
   const width = formData.get('width');
@@ -120,4 +120,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+};

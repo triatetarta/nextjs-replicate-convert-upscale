@@ -43,24 +43,28 @@ const ImageConverter = () => {
       }
 
       try {
-        const response = await axios.post('/api/convert-image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+        const response = await axios.post(
+          'https://nextjs-replicate-convert-upscale.vercel.app/api/convert-image',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
 
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              setUploadPercentage(percentCompleted);
+            onUploadProgress: (progressEvent) => {
+              if (progressEvent.total) {
+                const percentCompleted = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total
+                );
+                setUploadPercentage(percentCompleted);
 
-              if (percentCompleted === 100) {
-                setProcessing(true);
+                if (percentCompleted === 100) {
+                  setProcessing(true);
+                }
               }
-            }
-          },
-        });
+            },
+          }
+        );
 
         setOriginalImage(`data:image/webp;base64,${response.data.original}`);
         setResizedImage(`data:image/webp;base64,${response.data.resized}`);
