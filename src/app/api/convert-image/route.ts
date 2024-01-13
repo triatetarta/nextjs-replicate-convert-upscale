@@ -4,13 +4,13 @@ import Replicate from 'replicate';
 import axios from 'axios';
 import { headers } from 'next/headers';
 
+export const runtime = 'nodejs';
+
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_KEY,
 });
 
 export const POST = async (req: Request) => {
-  const headersList = headers();
-
   const formData = await req.formData();
 
   const file = formData.get('image');
@@ -117,6 +117,7 @@ export const POST = async (req: Request) => {
       {
         status: 200,
         headers: {
+          Accept: 'multipart/form-data',
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
