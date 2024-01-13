@@ -26,71 +26,56 @@ const ImageConverter = () => {
     }
   };
 
-  const handleClick = async () => {
-    const response = await axios.post(
-      '/api/convert-image',
-      {
-        hello: 'world',
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // onUploadProgress: (progressEvent) => {
-        //   if (progressEvent.total) {
-        //     const percentCompleted = Math.round(
-        //       (progressEvent.loaded * 100) / progressEvent.total
-        //     );
-        //     setUploadPercentage(percentCompleted);
-        //     if (percentCompleted === 100) {
-        //       setProcessing(true);
-        //     }
-        //   }
-        // },
-      }
-    );
-
-    console.log('response: ', response);
-  };
-
   const handleConvert = async () => {
     if (selectedFile) {
       setLoading(true);
       setProcessing(false);
       setUploadPercentage(0);
 
-      const formData = new FormData();
+      // const formData = new FormData();
 
-      formData.append('image', selectedFile);
-      formData.append('width', desiredWidth);
-      formData.append('magic_key', magicKey);
+      // formData.append('image', selectedFile);
+      // formData.append('width', desiredWidth);
+      // formData.append('magic_key', magicKey);
 
-      if (isUpscaled) {
-        formData.append('upscale', 'upscale');
-      }
+      // if (isUpscaled) {
+      //   formData.append('upscale', 'upscale');
+      // }
+
+      const formData = axios.toFormData({
+        image: selectedFile,
+        width: desiredWidth,
+        magic_key: magicKey,
+        ...(isUpscaled && { upscale: 'upscale' }),
+      });
 
       try {
-        // const response = await axios.post('/api/convert-image', formData, {
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data',
-        //   },
-        //   onUploadProgress: (progressEvent) => {
-        //     if (progressEvent.total) {
-        //       const percentCompleted = Math.round(
-        //         (progressEvent.loaded * 100) / progressEvent.total
-        //       );
-        //       setUploadPercentage(percentCompleted);
-        //       if (percentCompleted === 100) {
-        //         setProcessing(true);
-        //       }
-        //     }
-        //   },
-        // });
-        // setOriginalImage(`data:image/webp;base64,${response.data.original}`);
-        // setResizedImage(`data:image/webp;base64,${response.data.resized}`);
-        // if (response.data.upscaled) {
-        //   setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
-        // }
+        const response = await axios({
+          method: 'POST',
+          url: '/api/convert-image',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadPercentage(percentCompleted);
+              if (percentCompleted === 100) {
+                setProcessing(true);
+              }
+            }
+          },
+        });
+
+        setOriginalImage(`data:image/webp;base64,${response.data.original}`);
+        setResizedImage(`data:image/webp;base64,${response.data.resized}`);
+
+        if (response.data.upscaled) {
+          setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
+        }
       } catch (error) {
         console.error('Error:', error);
 
@@ -197,7 +182,7 @@ const ImageConverter = () => {
         </div>
         <button
           className="bg-green-500 text-white rounded-md px-4 py-2 mt-3 disabled:bg-gray-400 disabled:cursor-not-allowed w-full"
-          onClick={handleClick}
+          onClick={handleConvert}
           disabled={!selectedFile}
         >
           Convert {selectedFile?.name} to{' '}
