@@ -46,6 +46,8 @@ const ImageConverter = () => {
         const response = await axios.post('/api/convert-image', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            'Access-Control-Allow-Methods': 'GET, POST',
+            'Access-Control-Allow-Headers': 'Content-Type',
           },
 
           onUploadProgress: (progressEvent) => {
