@@ -14,6 +14,8 @@ export const POST = async (req: Request) => {
   const upscale = formData.get('upscale');
   const magic_key = formData.get('magic_key');
 
+  console.log('req: ', req);
+
   if (magic_key !== process.env.MAGIC_API_KEY) {
     return NextResponse.json({ message: `Invalid Magic Key` }, { status: 400 });
   }
@@ -74,41 +76,42 @@ export const POST = async (req: Request) => {
 
     const resizedWebp = resizedWebpResult as Buffer;
 
-    const base64 = resizedWebp.toString('base64');
-    const mimeType = 'image/webp';
-    const dataURI = `data:${mimeType};base64,${base64}`;
+    // const base64 = resizedWebp.toString('base64');
+    // const mimeType = 'image/webp';
+    // const dataURI = `data:${mimeType};base64,${base64}`;
 
     let output;
 
-    if (upscale === 'upscale') {
-      const res = (await replicate.run(
-        'cjwbw/real-esrgan:d0ee3d708c9b911f122a4ad90046c5d26a0293b99476d697f6bb7f2e251ce2d4',
-        {
-          input: {
-            image: dataURI,
-            upscale: 4,
-          },
-        }
-      )) as unknown as string;
+    // if (upscale === 'upscale') {
+    //   const res = (await replicate.run(
+    //     'cjwbw/real-esrgan:d0ee3d708c9b911f122a4ad90046c5d26a0293b99476d697f6bb7f2e251ce2d4',
+    //     {
+    //       input: {
+    //         image: dataURI,
+    //         upscale: 4,
+    //       },
+    //     }
+    //   )) as unknown as string;
 
-      const arrayBuffer = await axios.get(res, { responseType: 'arraybuffer' });
-      const imageData = Buffer.from(arrayBuffer.data);
+    //   const arrayBuffer = await axios.get(res, { responseType: 'arraybuffer' });
+    //   const imageData = Buffer.from(arrayBuffer.data);
 
-      const convertToWebp = await sharp(imageData)
-        .toFormat('webp', {
-          quality: 90,
-          lossless: false,
-        })
-        .toBuffer();
+    //   const convertToWebp = await sharp(imageData)
+    //     .toFormat('webp', {
+    //       quality: 90,
+    //       lossless: false,
+    //     })
+    //     .toBuffer();
 
-      output = convertToWebp;
-    }
+    //   output = convertToWebp;
+    // }
 
     return NextResponse.json(
       {
         original: originalWebp.toString('base64'),
         resized: resizedWebp.toString('base64'),
-        upscaled: output?.toString('base64') ?? '',
+        // upscaled: output?.toString('base64') ?? '',
+        upscaled: '',
       },
       {
         status: 200,
