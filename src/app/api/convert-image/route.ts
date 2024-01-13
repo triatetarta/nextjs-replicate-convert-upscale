@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 import Replicate from 'replicate';
 import axios from 'axios';
+import { headers } from 'next/headers';
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_KEY,
 });
 
 export const POST = async (req: Request) => {
+  const headersList = headers();
+
   const formData = await req.formData();
 
   const file = formData.get('image');

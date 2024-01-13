@@ -34,8 +34,6 @@ const ImageConverter = () => {
 
       const formData = new FormData();
 
-      console.log('formddata: ', formData);
-
       formData.append('image', selectedFile);
       formData.append('width', desiredWidth);
       formData.append('magic_key', magicKey);
@@ -46,6 +44,9 @@ const ImageConverter = () => {
 
       try {
         const response = await axios.post('/api/convert-image', formData, {
+          headers: {
+            Accept: 'multipart/form-data',
+          },
           onUploadProgress: (progressEvent) => {
             if (progressEvent.total) {
               const percentCompleted = Math.round(
