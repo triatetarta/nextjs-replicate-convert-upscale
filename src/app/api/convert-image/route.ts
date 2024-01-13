@@ -10,14 +10,10 @@ const replicate = new Replicate({
 export const POST = async (req: Request) => {
   const formData = await req.formData();
 
-  console.log('formData: ', formData);
-
   const file = formData.get('image');
   const width = formData.get('width');
   const upscale = formData.get('upscale');
   const magic_key = formData.get('magic_key');
-
-  console.log('file: ', file);
 
   if (magic_key !== process.env.MAGIC_API_KEY) {
     return NextResponse.json({ message: `Invalid Magic Key` }, { status: 400 });

@@ -45,47 +45,26 @@ const ImageConverter = () => {
       }
 
       try {
-        const res = await fetch('/api/convert-image', {
-          method: 'POST',
-
-          body: formData,
+        const response = await axios.post('/api/convert-image', formData, {
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadPercentage(percentCompleted);
+              if (percentCompleted === 100) {
+                setProcessing(true);
+              }
+            }
+          },
         });
 
-        const resJson = await res.json();
+        setOriginalImage(`data:image/webp;base64,${response.data.original}`);
+        setResizedImage(`data:image/webp;base64,${response.data.resized}`);
 
-        setOriginalImage(`data:image/webp;base64,${resJson.original}`);
-        setResizedImage(`data:image/webp;base64,${resJson.resized}`);
-
-        if (resJson.upscaled) {
-          setUpscaledImage(`data:image/webp;base64,${resJson.upscaled}`);
+        if (response.data.upscaled) {
+          setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
         }
-
-        console.log('resJson: ', resJson);
-
-        // const response = await axios.post('/api/convert-image', formData, {
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data',
-        //     Accept: 'application/json',
-        //   },
-        //   onUploadProgress: (progressEvent) => {
-        //     if (progressEvent.total) {
-        //       const percentCompleted = Math.round(
-        //         (progressEvent.loaded * 100) / progressEvent.total
-        //       );
-        //       setUploadPercentage(percentCompleted);
-        //       if (percentCompleted === 100) {
-        //         setProcessing(true);
-        //       }
-        //     }
-        //   },
-        // });
-
-        // setOriginalImage(`data:image/webp;base64,${response.data.original}`);
-        // setResizedImage(`data:image/webp;base64,${response.data.resized}`);
-
-        // if (response.data.upscaled) {
-        //   setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
-        // }
       } catch (error) {
         console.error('Error:', error);
 
