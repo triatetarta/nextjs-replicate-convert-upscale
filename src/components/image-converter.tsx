@@ -54,9 +54,6 @@ const ImageConverter = () => {
           method: 'POST',
           url: '/api/convert-image',
           data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
           onUploadProgress: (progressEvent) => {
             if (progressEvent.total) {
               const percentCompleted = Math.round(
