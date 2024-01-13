@@ -26,6 +26,33 @@ const ImageConverter = () => {
     }
   };
 
+  const handleClick = async () => {
+    const response = await axios.post(
+      '/api/convert-image',
+      {
+        hello: 'world',
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // onUploadProgress: (progressEvent) => {
+        //   if (progressEvent.total) {
+        //     const percentCompleted = Math.round(
+        //       (progressEvent.loaded * 100) / progressEvent.total
+        //     );
+        //     setUploadPercentage(percentCompleted);
+        //     if (percentCompleted === 100) {
+        //       setProcessing(true);
+        //     }
+        //   }
+        // },
+      }
+    );
+
+    console.log('response: ', response);
+  };
+
   const handleConvert = async () => {
     if (selectedFile) {
       setLoading(true);
@@ -43,33 +70,27 @@ const ImageConverter = () => {
       }
 
       try {
-        const response = await axios.post('/api/convert-image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Access-Control-Allow-Methods': 'GET, POST',
-            'Access-Control-Allow-Headers': 'Content-Type',
-          },
-
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              setUploadPercentage(percentCompleted);
-
-              if (percentCompleted === 100) {
-                setProcessing(true);
-              }
-            }
-          },
-        });
-
-        setOriginalImage(`data:image/webp;base64,${response.data.original}`);
-        setResizedImage(`data:image/webp;base64,${response.data.resized}`);
-
-        if (response.data.upscaled) {
-          setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
-        }
+        // const response = await axios.post('/api/convert-image', formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //   },
+        //   onUploadProgress: (progressEvent) => {
+        //     if (progressEvent.total) {
+        //       const percentCompleted = Math.round(
+        //         (progressEvent.loaded * 100) / progressEvent.total
+        //       );
+        //       setUploadPercentage(percentCompleted);
+        //       if (percentCompleted === 100) {
+        //         setProcessing(true);
+        //       }
+        //     }
+        //   },
+        // });
+        // setOriginalImage(`data:image/webp;base64,${response.data.original}`);
+        // setResizedImage(`data:image/webp;base64,${response.data.resized}`);
+        // if (response.data.upscaled) {
+        //   setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
+        // }
       } catch (error) {
         console.error('Error:', error);
 
@@ -176,7 +197,7 @@ const ImageConverter = () => {
         </div>
         <button
           className="bg-green-500 text-white rounded-md px-4 py-2 mt-3 disabled:bg-gray-400 disabled:cursor-not-allowed w-full"
-          onClick={handleConvert}
+          onClick={handleClick}
           disabled={!selectedFile}
         >
           Convert {selectedFile?.name} to{' '}

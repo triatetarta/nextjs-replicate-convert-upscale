@@ -8,73 +8,76 @@ const replicate = new Replicate({
 });
 
 export const POST = async (req: Request) => {
-  const formData = await req.formData();
-  const file = formData.get('image');
-  const width = formData.get('width');
-  const upscale = formData.get('upscale');
-  const magic_key = formData.get('magic_key');
+  // const formData = await req.formData();
+  const body = await req.json();
+  // const file = formData.get('image');
+  // const width = formData.get('width');
+  // const upscale = formData.get('upscale');
+  // const magic_key = formData.get('magic_key');
 
-  console.log('req: ', req);
+  // if (magic_key !== process.env.MAGIC_API_KEY) {
+  //   return NextResponse.json({ message: `Invalid Magic Key` }, { status: 400 });
+  // }
 
-  if (magic_key !== process.env.MAGIC_API_KEY) {
-    return NextResponse.json({ message: `Invalid Magic Key` }, { status: 400 });
+  // if (!file || typeof file === 'string') {
+  //   throw new Error('No file uploaded or file is not a Blob');
+  // }
+
+  if (body) {
+    return NextResponse.json(body);
   }
 
-  if (!file || typeof file === 'string') {
-    throw new Error('No file uploaded or file is not a Blob');
-  }
-
-  const buffer = await file.arrayBuffer();
-  const imageBuffer = Buffer.from(buffer);
+  // const buffer = await file.arrayBuffer();
+  // const imageBuffer = Buffer.from(buffer);
 
   try {
     // Convert to WebP without resizing
-    const convertOriginalWebp = () => {
-      return new Promise((resolve, reject) => {
-        sharp(imageBuffer)
-          .toFormat('webp', {
-            quality: 80,
-            lossless: false,
-          })
-          .toBuffer()
-          .then((result) => {
-            resolve(result);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    };
+    // const convertOriginalWebp = () => {
+    //   return new Promise((resolve, reject) => {
+    //     sharp(imageBuffer)
+    //       .toFormat('webp', {
+    //         quality: 80,
+    //         lossless: false,
+    //       })
+    //       .toBuffer()
+    //       .then((result) => {
+    //         resolve(result);
+    //       })
+    //       .catch((error) => {
+    //         reject(error);
+    //       });
+    //   });
+    // };
 
-    const originalResult = await convertOriginalWebp();
+    // const originalResult = await convertOriginalWebp();
 
-    const originalWebp = originalResult as Buffer;
+    // const originalWebp = originalResult as Buffer;
 
-    // Resize and convert to WebP
-    const convertResizedWebp = () => {
-      return new Promise((resolve, reject) => {
-        sharp(imageBuffer)
-          .resize({
-            width: Number(width),
-            withoutEnlargement: true,
-          })
-          .toFormat('webp', {
-            quality: 80,
-            lossless: false,
-          })
-          .toBuffer()
-          .then((result) => {
-            resolve(result);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    };
+    // // Resize and convert to WebP
+    // const convertResizedWebp = () => {
+    //   return new Promise((resolve, reject) => {
+    //     sharp(imageBuffer)
+    //       .resize({
+    //         width: Number(width),
+    //         withoutEnlargement: true,
+    //       })
+    //       .toFormat('webp', {
+    //         quality: 80,
+    //         lossless: false,
+    //       })
+    //       .toBuffer()
+    //       .then((result) => {
+    //         resolve(result);
+    //       })
+    //       .catch((error) => {
+    //         reject(error);
+    //       });
+    //   });
+    // };
 
-    const resizedWebpResult = await convertResizedWebp();
+    // const resizedWebpResult = await convertResizedWebp();
 
-    const resizedWebp = resizedWebpResult as Buffer;
+    // const resizedWebp = resizedWebpResult as Buffer;
 
     // const base64 = resizedWebp.toString('base64');
     // const mimeType = 'image/webp';
@@ -108,8 +111,8 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json(
       {
-        original: originalWebp.toString('base64'),
-        resized: resizedWebp.toString('base64'),
+        // original: originalWebp.toString('base64'),
+        // resized: resizedWebp.toString('base64'),
         // upscaled: output?.toString('base64') ?? '',
         upscaled: '',
       },
