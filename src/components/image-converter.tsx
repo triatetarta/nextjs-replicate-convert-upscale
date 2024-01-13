@@ -90,6 +90,11 @@ const ImageConverter = () => {
     setUploadPercentage(0);
     setProcessing(false);
     setErrorMessage('');
+    setIsUpscaled(false);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const downloadImage = async (imageUrl: string, fileName: string) => {
