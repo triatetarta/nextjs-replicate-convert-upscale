@@ -32,47 +32,60 @@ const ImageConverter = () => {
       setProcessing(false);
       setUploadPercentage(0);
 
-      // const formData = new FormData();
+      const formData = new FormData();
 
-      // formData.append('image', selectedFile);
-      // formData.append('width', desiredWidth);
-      // formData.append('magic_key', magicKey);
+      console.log('formddata: ', formData);
 
-      // if (isUpscaled) {
-      //   formData.append('upscale', 'upscale');
-      // }
+      formData.append('image', selectedFile);
+      formData.append('width', desiredWidth);
+      formData.append('magic_key', magicKey);
 
-      const formData = axios.toFormData({
-        image: selectedFile,
-        width: desiredWidth,
-        magic_key: magicKey,
-        ...(isUpscaled && { upscale: 'upscale' }),
-      });
+      if (isUpscaled) {
+        formData.append('upscale', 'upscale');
+      }
 
       try {
-        const response = await axios({
+        const res = await fetch('/api/convert-image', {
           method: 'POST',
-          url: '/api/convert-image',
-          data: formData,
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              setUploadPercentage(percentCompleted);
-              if (percentCompleted === 100) {
-                setProcessing(true);
-              }
-            }
-          },
+
+          body: formData,
         });
 
-        setOriginalImage(`data:image/webp;base64,${response.data.original}`);
-        setResizedImage(`data:image/webp;base64,${response.data.resized}`);
+        const resJson = await res.json();
 
-        if (response.data.upscaled) {
-          setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
+        setOriginalImage(`data:image/webp;base64,${resJson.original}`);
+        setResizedImage(`data:image/webp;base64,${resJson.resized}`);
+
+        if (resJson.upscaled) {
+          setUpscaledImage(`data:image/webp;base64,${resJson.upscaled}`);
         }
+
+        console.log('resJson: ', resJson);
+
+        // const response = await axios.post('/api/convert-image', formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //     Accept: 'application/json',
+        //   },
+        //   onUploadProgress: (progressEvent) => {
+        //     if (progressEvent.total) {
+        //       const percentCompleted = Math.round(
+        //         (progressEvent.loaded * 100) / progressEvent.total
+        //       );
+        //       setUploadPercentage(percentCompleted);
+        //       if (percentCompleted === 100) {
+        //         setProcessing(true);
+        //       }
+        //     }
+        //   },
+        // });
+
+        // setOriginalImage(`data:image/webp;base64,${response.data.original}`);
+        // setResizedImage(`data:image/webp;base64,${response.data.resized}`);
+
+        // if (response.data.upscaled) {
+        //   setUpscaledImage(`data:image/webp;base64,${response.data.upscaled}`);
+        // }
       } catch (error) {
         console.error('Error:', error);
 
