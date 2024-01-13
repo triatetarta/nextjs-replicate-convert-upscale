@@ -72,7 +72,7 @@ const ImageConverter = () => {
         console.error('Error:', error);
 
         if (error instanceof AxiosError) {
-          setErrorMessage(error.response?.data);
+          setErrorMessage(error.response?.data.message);
         }
       } finally {
         setLoading(false);
